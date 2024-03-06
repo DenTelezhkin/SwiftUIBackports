@@ -57,7 +57,7 @@ internal extension PlatformView {
         return nil
     }
 
-    func sibling<ViewType: PlatformView>(ofType type: ViewType.Type) -> ViewType? {
+    func sibling<ViewType: PlatformView>(ofType type: ViewType.Type, checkDirectAncestor: Bool = false) -> ViewType? {
         guard let superview = superview, let index = superview.subviews.firstIndex(of: self) else { return nil }
 
         var views = superview.subviews
@@ -68,6 +68,17 @@ internal extension PlatformView {
                 return typed
             } else if let typed = subview.descendent(ofType: type) {
                 return typed
+            }
+        }
+        
+        if let ancestor = superview.superview, checkDirectAncestor {
+            views = ancestor.subviews
+            for subview in views.reversed() {
+                if let typed = subview as? ViewType {
+                    return typed
+                } else if let typed = subview.descendent(ofType: type) {
+                    return typed
+                }
             }
         }
 
@@ -113,8 +124,8 @@ internal struct Inspector {
         hostView.ancestor(ofType: ViewType.self)
     }
 
-    func sibling<ViewType: PlatformView>(ofType: ViewType.Type) -> ViewType? {
-        hostView.sibling(ofType: ViewType.self)
+    func sibling<ViewType: PlatformView>(ofType: ViewType.Type, checkDirectAncestor: Bool = false) -> ViewType? {
+        hostView.sibling(ofType: ViewType.self, checkDirectAncestor: checkDirectAncestor)
     }
 
     func descendent<ViewType: PlatformView>(ofType: ViewType.Type) -> ViewType? {
@@ -166,9 +177,9 @@ extension View {
         })
     }
 
-    func sibling<T: PlatformView>(forType type: T.Type, body: @escaping (Proxy<T>) -> Void) -> some View {
+    func sibling<T: PlatformView>(forType type: T.Type, checkDirectAncestor: Bool = false, body: @escaping (Proxy<T>) -> Void) -> some View {
         inject(InspectionView { inspector in
-            inspector.sibling(ofType: T.self)
+            inspector.sibling(ofType: T.self, checkDirectAncestor: checkDirectAncestor)
         } customize: { proxy in
             body(proxy)
         })
