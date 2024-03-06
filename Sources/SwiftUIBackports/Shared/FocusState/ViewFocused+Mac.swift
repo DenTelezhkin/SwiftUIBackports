@@ -74,6 +74,10 @@ private final class Coordinator: NSObject, ObservableObject, NSTextFieldDelegate
     
     func controlTextDidBeginEditing(_ obj: Notification) {
         _delegate?.controlTextDidBeginEditing?(obj)
+        guard field?.window?.firstResponder !== field?.currentEditor() else {
+            // Editing has already begun
+            return
+        }
         onBegin()
     }
     
