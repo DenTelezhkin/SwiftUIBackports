@@ -1,7 +1,8 @@
 import SwiftUI
 
-#if os(iOS)
+#if os(iOS) || os(macOS)
 @available(iOS, deprecated: 15)
+@available(macOS, deprecated: 12)
 public extension Backport where Wrapped == Any {
     /// A property wrapper type that can read and write a value that SwiftUI updates
     /// as the placement of focus within the scene changes.
