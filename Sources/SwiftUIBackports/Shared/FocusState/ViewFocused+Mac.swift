@@ -40,7 +40,7 @@ private struct FocusModifier<Value: Hashable>: ViewModifier {
                     focused = nil
                 }
 
-                if focused == value, view.isEditable, view.isEnabled {
+                if focused == value, view.isEditable, view.isEnabled, view.window?.firstResponder !== view.currentEditor() {
                     view.window?.makeFirstResponder(view)
                 }
             }
