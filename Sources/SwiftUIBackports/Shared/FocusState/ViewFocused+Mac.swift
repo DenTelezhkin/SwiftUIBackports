@@ -24,7 +24,9 @@ private struct FocusModifier<Value: Hashable>: ViewModifier {
     func body(content: Content) -> some View {
         content
             // this ensures when the field goes out of view, it doesn't retain focus
-            .onDisappear { focused = nil }
+            .onDisappear {
+                focused = nil
+            }
             .sibling(forType: NSTextField.self, checkDirectAncestor: true) { proxy in
                 let view = proxy.instance
                 coordinator.observe(field: view)
