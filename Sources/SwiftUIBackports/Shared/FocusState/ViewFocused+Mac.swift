@@ -41,7 +41,7 @@ private struct FocusModifier<Value: Hashable>: ViewModifier {
                 }
 
                 if focused == value, view.isEditable, view.isEnabled {
-                    view.becomeFirstResponder()
+                    view.window?.makeFirstResponder(view)
                 }
             }
             .backport.onChange(of: focused) { newValue in
